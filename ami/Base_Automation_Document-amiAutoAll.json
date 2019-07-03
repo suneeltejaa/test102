@@ -1,0 +1,49 @@
+{
+  "description": "Automation Document Example JSON Template",
+  "schemaVersion": "0.3",
+  "assumeRole": "arn:aws:iam::011275511485:role/AutomationServiceRole",
+  "parameters": {
+  },
+  "mainSteps": [
+    {
+      "name": "amiAutomationWin2012",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 1,
+      "onFailure": "Abort",
+      "inputs": {
+        "FunctionName": "amiAutomationWin2012"
+      }
+    },
+    {
+      "name": "amiAutomationWin2016",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 1,
+      "onFailure": "Abort",
+      "inputs": {
+        "FunctionName": "amiAutomationWin2016"
+      }
+    },
+    {
+      "name": "amiAutomationRHEL7",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 1,
+      "onFailure": "Abort",
+      "inputs": {
+        "FunctionName": "amiAutomationRHEL7"
+      }
+    },
+    {
+      "name": "amiAutomationLINUX2",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 1,
+      "onFailure": "Abort",
+      "inputs": {
+        "FunctionName": "amiAutomationLINUX2"
+      }
+    }
+  ]
+}

@@ -1,0 +1,524 @@
+{
+  "description": "Systems Manager Automation Demo - Patch and Create a New AMI",
+  "schemaVersion": "0.3",
+  "assumeRole": "arn:aws:iam::011275511485:role/AutomationServiceRole",
+  "mainSteps": [
+    {
+      "name": "772448015211",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"772448015211\"}"
+      }
+    },
+    {
+      "name": "277141866027",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"277141866027\"}"
+      }
+    },
+    {
+      "name": "245930108294",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"245930108294\"}"
+      }
+    },
+    {
+      "name": "210265922058",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"210265922058\"}"
+      }
+    },
+    {
+      "name": "198052631016",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"198052631016\"}"
+      }
+    },
+    {
+      "name": "190101517450",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"190101517450\"}"
+      }
+    },
+    {
+      "name": "160647469903",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"160647469903\"}"
+      }
+    },
+    {
+      "name": "156884057084",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"156884057084\"}"
+      }
+    },
+    {
+      "name": "130312249203",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"130312249203\"}"
+      }
+    },
+    {
+      "name": "011275511485",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"011275511485\"}"
+      }
+    },
+    {
+      "name": "027532563197",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"027532563197\"}"
+      }
+    },
+    {
+      "name": "031686868338",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"031686868338\"}"
+      }
+    },
+    {
+      "name": "031791575028",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"031791575028\"}"
+      }
+    },
+    {
+      "name": "063706574754",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"063706574754\"}"
+      }
+    },
+    {
+      "name": "077539374103",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"077539374103\"}"
+      }
+    },
+    {
+      "name": "082176615813",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"082176615813\"}"
+      }
+    },
+    {
+      "name": "128927813985",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"128927813985\"}"
+      }
+    },
+    {
+      "name": "736176406297",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"736176406297\"}"
+      }
+    },
+    {
+      "name": "699183880494",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"699183880494\"}"
+      }
+    },
+    {
+      "name": "640712918980",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"640712918980\"}"
+      }
+    },
+    {
+      "name": "608515732360",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"608515732360\"}"
+      }
+    },
+    {
+      "name": "587764000924",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"587764000924\"}"
+      }
+    },
+    {
+      "name": "580610271700",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"580610271700\"}"
+      }
+    },
+    {
+      "name": "557350676069",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"557350676069\"}"
+      }
+    },
+    {
+      "name": "299602398622",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"299602398622\"}"
+      }
+    },
+    {
+      "name": "299975258897",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"299975258897\"}"
+      }
+    },
+    {
+      "name": "304987092631",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"304987092631\"}"
+      }
+    },
+    {
+      "name": "347927465314",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"347927465314\"}"
+      }
+    },
+    {
+      "name": "396496193604",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"396496193604\"}"
+      }
+    },
+    {
+      "name": "400387983702",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"400387983702\"}"
+      }
+    },
+    {
+      "name": "435452409739",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"435452409739\"}"
+      }
+    },
+    {
+      "name": "452127281478",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"452127281478\"}"
+      }
+    },
+    {
+      "name": "538235630974",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"538235630974\"}"
+      }
+    },
+    {
+      "name": "854422766513",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"854422766513\"}"
+      }
+    },
+    {
+      "name": "896639151772",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"896639151772\"}"
+      }
+    },
+    {
+      "name": "897860998156",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"897860998156\"}"
+      }
+    },
+    {
+      "name": "947044032016",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"947044032016\"}"
+      }
+    },
+    {
+      "name": "971173505912",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"971173505912\"}"
+      }
+    },
+    {
+      "name": "530710445070",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"530710445070\"}"
+      }
+    },
+    {
+      "name": "703722312672",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"703722312672\"}"
+      }
+    },
+    {
+      "name": "336520826406",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"336520826406\"}"
+      }
+    },
+    {
+      "name": "266472205365",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"266472205365\"}"
+      }
+    },
+    {
+      "name": "228748083573",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"228748083573\"}"
+      }
+    },
+    {
+      "name": "681141260920",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"681141260920\"}"
+      }
+    },
+    {
+      "name": "111588580784",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"111588580784\"}"
+      }
+    },
+    {
+      "name": "524234064850",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"524234064850\"}"
+      }
+    },
+    {
+      "name": "172185050124",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 2,
+      "onFailure": "Continue",
+      "inputs": {
+        "FunctionName": "amiAutomationAcctShareLINUX2",
+        "Payload": "{\"accountID\":\"172185050124\"}"
+      }
+    }
+  ]
+}

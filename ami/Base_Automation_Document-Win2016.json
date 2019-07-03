@@ -1,0 +1,246 @@
+{
+  "description": "Systems Manager Automation - Patch and Create a New AMI",
+  "schemaVersion": "0.3",
+  "assumeRole": "arn:aws:iam::011275511485:role/AutomationServiceRole",
+  "parameters": {
+    "sourceAMIid": {
+      "type": "String",
+      "description": "AMI to patch"
+    },
+    "targetAMIname": {
+      "type": "String",
+      "description": "Name of new AMI",
+      "default": "SPGi.Win-2016-{{global:DATE}}"
+    }
+  },
+  "mainSteps": [
+    {
+      "name": "startInstances",
+      "action": "aws:runInstances",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 1,
+      "onFailure": "Abort",
+      "inputs": {
+        "ImageId": "{{ sourceAMIid }}",
+        "InstanceType": "m5d.large",
+        "SubnetId": "subnet-34d0745c",
+        "SecurityGroupIds": [
+          "sg-0dfa4a45"
+        ],
+        "MinInstanceCount": 1,
+        "MaxInstanceCount": 1,
+        "IamInstanceProfileName": "ManagedInstanceProfile"
+      }
+    },
+    {
+      "name": "UpdateSSMAgent",
+      "action": "aws:runCommand",
+      "maxAttempts": 3,
+      "onFailure": "Abort",
+      "timeoutSeconds": 600,
+      "inputs": {
+        "DocumentName": "AWS-UpdateSSMAgent",
+        "InstanceIds": [
+          "{{ startInstances.InstanceIds }}"
+        ],
+        "Parameters": {
+          "allowDowngrade": "false"
+        }
+      }
+    },
+    {
+      "name": "UpdateAWSInspect",
+      "action": "aws:runCommand",
+      "maxAttempts": 3,
+      "onFailure": "Abort",
+      "timeoutSeconds": 600,
+      "inputs": {
+        "DocumentName": "AmazonInspector-ManageAWSAgent",
+        "InstanceIds": [
+          "{{ startInstances.InstanceIds }}"
+        ],
+        "Parameters": {
+          "Operation": "Install"
+        }
+      }
+    },
+    {
+      "name": "UpdateAWSPVDriver",
+      "action": "aws:runCommand",
+      "maxAttempts": 3,
+      "onFailure": "Abort",
+      "timeoutSeconds": 600,
+      "inputs": {
+        "DocumentName": "AWS-ConfigureAWSPackage",
+        "InstanceIds": [
+          "{{ startInstances.InstanceIds }}"
+        ],
+        "Parameters": {
+          "name": "AWSPVDriver",
+          "action": "Install"
+        }
+      }
+    },
+    {
+      "name": "UpdateAWSEnaNetworkDriver",
+      "action": "aws:runCommand",
+      "maxAttempts": 3,
+      "onFailure": "Abort",
+      "timeoutSeconds": 600,
+      "inputs": {
+        "DocumentName": "AWS-ConfigureAWSPackage",
+        "InstanceIds": [
+          "{{ startInstances.InstanceIds }}"
+        ],
+        "Parameters": {
+          "name": "AwsEnaNetworkDriver",
+          "action": "Install"
+        }
+      }
+    },
+    {
+      "name": "UpdateAWSNVMe",
+      "action": "aws:runCommand",
+      "maxAttempts": 3,
+      "onFailure": "Abort",
+      "timeoutSeconds": 600,
+      "inputs": {
+        "DocumentName": "AWS-ConfigureAWSPackage",
+        "InstanceIds": [
+          "{{ startInstances.InstanceIds }}"
+        ],
+        "Parameters": {
+          "name": "AWSNVMe",
+          "action": "Install"
+        }
+      }
+    },
+    {
+      "name": "installMissingWindowsUpdates",
+      "action": "aws:runCommand",
+      "maxAttempts": 1,
+      "onFailure": "Continue",
+      "inputs": {
+        "DocumentName": "AWS-InstallMissingWindowsUpdates",
+        "InstanceIds": [
+          "{{ startInstances.InstanceIds }}"
+        ],
+        "Parameters": {
+          "UpdateLevel": "Important"
+        }
+      }
+    },
+    {
+      "name": "RunSysprep",
+      "action": "aws:runCommand",
+      "maxAttempts": 1,
+      "onFailure": "Abort",
+      "inputs": {
+        "DocumentName": "AWSEC2-RunSysprep",
+        "InstanceIds": [
+          "{{ startInstances.InstanceIds }}"
+        ]
+      }
+    },
+    {
+      "name": "stopInstance",
+      "action": "aws:changeInstanceState",
+      "maxAttempts": 1,
+      "onFailure": "Abort",
+      "inputs": {
+        "InstanceIds": [
+          "{{ startInstances.InstanceIds }}"
+        ],
+        "DesiredState": "stopped"
+      }
+    },
+    {
+      "name": "SendApprovalEmailSecurityAdmin",
+      "action": "aws:approve",
+      "maxAttempts": 2,
+      "timeoutSeconds": 86400,
+      "onFailure": "Abort",
+      "inputs": {
+        "NotificationArn": "arn:aws:sns:us-east-1:011275511485:AMI-SSM-Approval",
+        "Message": "WIN2016 AMI Auotmation has passed the pipeline and is waiting for your approval.
+                    Please login using Security Admin IAM Role to approve this",
+        "MinRequiredApprovals": 1,
+        "Approvers": ["arn:aws:iam::011275511485:role/ADFS-MHF-SecurityAdministrator"]
+      }
+    },
+    {
+      "name": "SendApprovalEmailSystemAdmin",
+      "action": "aws:approve",
+      "maxAttempts": 2,
+      "timeoutSeconds": 86400,
+      "onFailure": "Abort",
+      "inputs": {
+        "NotificationArn": "arn:aws:sns:us-east-1:011275511485:AMI-SSM-Approval",
+        "Message": "WIN2016 AMI Auotmation has passed the pipeline and is waiting for your approval.
+                    Please login using System Admin IAM Role to approve this",
+        "MinRequiredApprovals": 1,
+        "Approvers": ["arn:aws:iam::011275511485:role/ADFS-MHF-SystemAdministrator"]
+      }
+    },
+    {
+      "name": "createImage",
+      "action": "aws:createImage",
+      "maxAttempts": 1,
+      "onFailure": "Abort",
+      "inputs": {
+        "InstanceId": "{{ startInstances.InstanceIds }}",
+        "ImageName": "{{ targetAMIname }}",
+        "NoReboot": true,
+        "ImageDescription": "AMI created by EC2 Automation"
+      }
+    },
+    {
+      "name": "createTags",
+      "action": "aws:createTags",
+      "maxAttempts": 1,
+      "onFailure": "Abort",
+      "inputs": {
+        "ResourceType": "EC2",
+        "ResourceIds": [
+          "{{createImage.ImageId}}"
+        ],
+        "Tags": [
+          {
+            "Key": "Generated By Automation",
+            "Value": "{{automation:EXECUTION_ID}}"
+          },
+          {
+            "Key": "From Source AMI",
+            "Value": "{{sourceAMIid}}"
+          }
+        ]
+      }
+    },
+    {
+      "name": "terminateInstance",
+      "action": "aws:changeInstanceState",
+      "maxAttempts": 1,
+      "onFailure": "Abort",
+      "inputs": {
+        "InstanceIds": [
+          "{{ startInstances.InstanceIds }}"
+        ],
+        "DesiredState": "terminated"
+      }
+    },
+    {
+      "name": "updateSsmParam",
+      "action": "aws:invokeLambdaFunction",
+      "timeoutSeconds": 1200,
+      "maxAttempts": 1,
+      "onFailure": "Abort",
+      "inputs": {
+        "FunctionName": "Automation-UpdateSsmParam",
+        "Payload": "{\"parameterName\":\"latestAmiWin2016\", \"parameterValue\":\"{{createImage.ImageId}}\"}"
+      }
+    }
+  ],
+  "outputs": [
+    "createImage.ImageId"
+  ]
+}
