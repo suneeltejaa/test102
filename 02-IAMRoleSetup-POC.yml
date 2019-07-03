@@ -1,0 +1,604 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Create Baseline Policies and Roles
+Parameters:
+  pFederationProvider:
+    Type: String
+    Description: Input name of the Federation Provider being used.
+    Default: ADFS-MHF
+  pLevel1Role:
+    Type: String
+    Description: This Name should match what you will use for the Active Directory Group for Level 1 Role (name given will have "ADFS-MHF-" prepended).
+    Default: Level1
+  pLevel2Role:
+    Type: String
+    Description: This Name should match what you will use for the Active Directory Group for Level 2 Role (name given will have "ADFS-MHF-" prepended)
+    Default: Level2
+  pBillingRole:
+    Type: String
+    Description: This Name should match what you will use for the Active Directory Group for Billing Role (name given will have "ADFS-MHF-" prepended).
+    Default: Billing
+  pDatabaseAdministratorRole:
+    Type: String
+    Description: This Name should match what you will use for the Active Directory Group for DBA Role (name given will have "ADFS-MHF-" prepended).
+    Default: DatabaseAdministrator
+  pDataScientistRole:
+    Type: String
+    Description: This Name should match what you will use for the Active Directory Group for Data Scientist Role (name given will have "ADFS-MHF-" prepended).
+    Default: DataScientist
+  pNetworkAdministratorRole:
+    Type: String
+    Description: This Name should match what you will use for the Active Directory Group for Network Administrator Role (name given will have "ADFS-MHF-" prepended).
+    Default: NetworkAdministrator
+  pPowerUserRole:
+    Type: String
+    Description: This Name should match what you will use for the Active Directory Group for Power User Role (name given will have "ADFS-MHF-" prepended).
+    Default: PowerUser
+  pSecurityAuditRole:
+    Type: String
+    Description: This Name should match what you will use for the Active Directory Group for Security Audit Role (name given will have "ADFS-MHF-" prepended).
+    Default: SecurityAudit
+  pSupportUserRole:
+    Type: String
+    Description: This Name should match what you will use for the Active Directory Group for Support User Role (name given will have "ADFS-MHF-" prepended).
+    Default: SupportUser
+  pSystemAdministratorRole:
+    Type: String
+    Description: This Name should match what you will use for the Active Directory Group for System Admin Role (name given will have "ADFS-MHF-" prepended).
+    Default: SystemAdministrator
+  pViewOnlyAccessRole:
+    Type: String
+    Description: This Name should match what you will use for the Active Directory Group for View Only Access Role (name given will have "ADFS-MHF-" prepended).
+    Default: ViewOnlyAccess
+  pSecurityAdministratorRole:
+    Type: String
+    Description: This Name should match what you will use for the Active Directory Group for Security Admin Access Role (name given will have "ADFS-MHF-" prepended).
+    Default: SecurityAdministrator
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+    - Label:
+        default: Parameters for Lambda stack
+      Parameters:
+        - pFederationProvider
+        - pLevel1Role
+        - pLevel2Role
+        - pBillingRole
+        - pDatabaseAdministratorRole
+        - pDataScientistRole
+        - pNetworkAdministratorRole
+        - pPowerUserRole
+        - pSecurityAuditRole
+        - pSupportUserRole
+        - pSystemAdministratorRole
+        - pViewOnlyAccessRole
+        - pSecurityAdministratorRole
+    ParameterLabels:
+      pFederationProvider:
+        default: SAML Provider Name
+      pLevel1Role:
+        default: Level 1 Role
+      pLevel2Role:
+        default: Level 2 Role
+      pBillingRole:
+        default: Billing Role
+      pDatabaseAdministratorRole:
+        default: DBA Role
+      pDataScientistRole:
+        default: Data Scientist Role
+      pNetworkAdministratorRole:
+        default: Network Administrator Role
+      pPowerUserRole:
+        default: Power User Role
+      pSecurityAuditRole:
+        default: Security Audit Role
+      pSupportUserRole:
+        default: Support User Role
+      pSystemAdministratorRole:
+        default: System Administrator Role
+      pViewOnlyAccessRole:
+        default: View Only Access Role
+      pSecurityAdministratorRole:
+        default: Security Administrator Role
+Resources:
+  rLevel1Policy: # Level 1 Managed Policy attached to Level 1 Role that allows read access to Cloud Watch, EC2 and IAM resources
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: Stmt1413843504119
+            Action:
+              - cloudwatch:DescribeAlarmHistory
+              - cloudwatch:DescribeAlarms
+              - cloudwatch:DisableAlarmActions
+              - cloudwatch:GetMetricStatistics
+              - cloudwatch:ListMetrics
+            Effect: Allow
+            Resource: '*'
+          - Sid: Stmt1415828297597
+            Action:
+              - iam:AddRoleToInstanceProfile
+              - iam:ListInstanceProfiles
+              - iam:ListInstanceProfilesForRole
+            Effect: Allow
+            Resource: '*'
+          - Sid: Stmt1413844206038
+            Action:
+              - ec2:DescribeAddresses
+              - ec2:DescribeAvailabilityZones
+              - ec2:DescribeCustomerGateways
+              - ec2:DescribeDhcpOptions
+              - ec2:DescribeImageAttribute
+              - ec2:DescribeImages
+              - ec2:DescribeInstanceAttribute
+              - ec2:DescribeInstanceStatus
+              - ec2:DescribeInstances
+              - ec2:DescribeInternetGateways
+              - ec2:DescribeKeyPairs
+              - ec2:DescribeNetworkAcls
+              - ec2:DescribeNetworkInterfaceAttribute
+              - ec2:DescribeNetworkInterfaces
+              - ec2:DescribeRegions
+              - ec2:DescribeReservedInstances
+              - ec2:DescribeReservedInstancesListings
+              - ec2:DescribeReservedInstancesModifications
+              - ec2:DescribeRouteTables
+              - ec2:DescribeSecurityGroups
+              - ec2:DescribeSnapshotAttribute
+              - ec2:DescribeSnapshots
+              - ec2:DescribeSubnets
+              - ec2:DescribeTags
+              - ec2:DescribeVolumeAttribute
+              - ec2:DescribeVolumeStatus
+              - ec2:DescribeVolumes
+              - ec2:DescribeVpcAttribute
+              - ec2:DescribeVpcs
+              - ec2:DescribeVpcPeeringConnection
+              - ec2:DescribeVpnConnections
+              - ec2:DescribeVpnGateways
+              - ec2:GetConsoleOutput
+              - ec2:MonitorInstances
+              - ec2:RebootInstances
+              - ec2:StartInstances
+              - ec2:StopInstances
+            Effect: Allow
+            Resource: '*'
+  rLevel2Policy: # # Level 1 Managed Policy attached to Level 2 Role that allows all access to System Admin resources
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: Stmt1413844303484
+            Action: ec2:*
+            Effect: Allow
+            Resource: '*'
+          - Sid: Stmt1413844312190
+            Action: s3:*
+            Effect: Allow
+            Resource: '*'
+          - Sid: Stmt1413844326301
+            Action: route53:*
+            Effect: Allow
+            Resource: '*'
+          - Sid: Stmt1413844336632
+            Action: route53domains:*
+            Effect: Allow
+            Resource: '*'
+          - Sid: Stmt1413844347399
+            Action: rds:*
+            Effect: Allow
+            Resource: '*'
+          - Sid: Stmt1413844362791
+            Action: glacier:*
+            Effect: Allow
+            Resource: '*'
+          - Sid: Stmt1413844406987
+            Action: cloudfront:*
+            Effect: Allow
+            Resource: '*'
+          - Sid: Stmt1413844411655
+            Action: cloudwatch:*
+            Effect: Allow
+            Resource: '*'
+          - Sid: Stmt1413844428419
+            Action: logs:*
+            Effect: Allow
+            Resource: '*'
+          - Sid: Stmt1413844468561
+            Action:
+              - cloudtrail:DescribeTrails
+              - cloudtrail:GetTrailStatus
+            Effect: Allow
+            Resource: '*'
+          - Sid: Stmt1413844509246
+            Action: autoscaling:*
+            Effect: Allow
+            Resource: '*'
+          - Sid: Stmt1413844515949
+            Action: elasticloadbalancing:*
+            Effect: Allow
+            Resource: '*'
+          - Sid: Stmt1413844700448
+            Action:
+              - iam:AddRoleToInstanceProfile
+              - iam:ListInstanceProfiles
+              - iam:ListInstanceProfilesForRole
+            Effect: Allow
+            Resource: '*'
+  rEnhancedSystemAdmnistratorPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+            Action:
+              - "support:*"
+              - "autoscaling:*"
+              - "aws-marketplace:*"
+              - "cloudformation:*"
+              - "cloudfront:*"
+              - "cloudsearch:*"
+              - "cloudtrail:*"
+              - "cloudwatch:*"
+              - "config:*"
+              - "directconnect:*"
+              - "discovery:*"
+              - "ds:*"
+              - "ec2:*"
+              - "elasticloadbalancing:*"
+              - "es:*"
+              - "events:*"
+              - "glacier:*"
+              - "iam:*"
+              - "kms:*"
+              - "lambda:*"
+              - "logs:*"
+              - "route53:*"
+              - "route53domains:*"
+              - "s3:*"
+              - "sns:*"
+              - "sqs:*"
+              - "rds:*"
+              - "acm:*"
+              - "apigateway:*"
+              - "acm-pca:*"
+              - "dynamodb:*"
+              - "elasticbeanstalk:*"
+              - "elasticfilesystem:*"
+              - "eks:*"
+              - "ecs:*"
+              - "ElastiCache:*"
+              - "redshift:*"
+              - "ses:*"
+              - "swf:*"
+              - "storagegateway:*"
+              - "ssm:*"
+              - "route53domains:*"
+              - "trustedadvisor:*"
+              - "opsworks:*"
+              - "servicediscovery:*"
+              - "emr:*"
+              - "guardduty:*"
+            Effect: Allow
+            Resource: '*'
+  rLevel1Role:  # Level 1 IAM Role resource that ties in Federation Provider
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub
+      - "${Provider}-${Role}"
+      - { Role: !Ref pLevel1Role, Provider: !Ref pFederationProvider}
+      ManagedPolicyArns:
+        - !Ref rLevel1Policy
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                !Sub
+                  - "arn:aws:iam::${AWS::AccountId}:saml-provider/${Provider}"
+                  - { Provider: !Ref pFederationProvider }
+            Action:
+              - "sts:AssumeRoleWithSAML"
+            Condition:
+              StringEquals:
+                SAML:aud: "https://signin.aws.amazon.com/saml"
+  rLevel2Role: # Level 2 IAM Role resource that ties in Federation Provider
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub
+      - "${Provider}-${Role}"
+      - { Role: !Ref pLevel2Role, Provider: !Ref pFederationProvider}
+      ManagedPolicyArns:
+        - !Ref rLevel2Policy
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                !Sub
+                  - "arn:aws:iam::${AWS::AccountId}:saml-provider/${Provider}"
+                  - { Provider: !Ref pFederationProvider }
+            Action:
+              - "sts:AssumeRoleWithSAML"
+            Condition:
+              StringEquals:
+                SAML:aud: "https://signin.aws.amazon.com/saml"
+  rBillingRole:   #Grants permissions for billing and cost management. This includes viewing account ussage and viewing and modifying budgets and payment methods.
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: !Sub
+        - "${Provider}-${Role}"
+        - { Role: !Ref pBillingRole, Provider: !Ref pFederationProvider}
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/job-function/Billing
+        AssumeRolePolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal:
+                Federated:
+                  !Sub
+                  - "arn:aws:iam::${AWS::AccountId}:saml-provider/${Provider}"
+                  - { Provider: !Ref pFederationProvider }
+              Action:
+                - "sts:AssumeRoleWithSAML"
+              Condition:
+                StringEquals:
+                  SAML:aud: "https://signin.aws.amazon.com/saml"
+  rDatabaseAdministratorRole: #Grants full access permissions to AWS services and actions required to set up and configure AWS database services.
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub
+      - "${Provider}-${Role}"
+      - { Role: !Ref pDatabaseAdministratorRole, Provider: !Ref pFederationProvider}
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/job-function/DatabaseAdministrator
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                !Sub
+                  - "arn:aws:iam::${AWS::AccountId}:saml-provider/${Provider}"
+                  - { Provider: !Ref pFederationProvider }
+            Action:
+              - "sts:AssumeRoleWithSAML"
+            Condition:
+              StringEquals:
+                SAML:aud: "https://signin.aws.amazon.com/saml"
+  rDataScientistRole: #Grants permissions to AWS data analytics services.
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub
+      - "${Provider}-${Role}"
+      - { Role: !Ref pDataScientistRole, Provider: !Ref pFederationProvider}
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/job-function/DataScientist
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                !Sub
+                  - "arn:aws:iam::${AWS::AccountId}:saml-provider/${Provider}"
+                  - { Provider: !Ref pFederationProvider }
+            Action:
+              - "sts:AssumeRoleWithSAML"
+            Condition:
+              StringEquals:
+                SAML:aud: "https://signin.aws.amazon.com/saml"
+  rDenyBillingPolicy: #This policy prevents Roles and Groups from Accessing Billing, with the exception of the Billing Roles/Groups
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+        ManagedPolicyName: Policy-DenyBilling
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+              - Effect: Deny
+                Action: aws-portal:*Billing
+                Resource: '*'
+        Roles:
+          - !Ref rSystemAdministratorRole
+          - !Ref rDatabaseAdministratorRole
+          - !Ref rDataScientistRole
+          - !Ref rNetworkAdministratorRole
+          - !Ref rPowerUserRole
+          - !Ref rSecurityAuditRole
+          - !Ref rSupportUserRole
+          - !Ref rViewOnlyAccessRole
+  rDenyCloudTrailDeletePolicy:    #This policy prevents Roles and Groups from Deleting, Stopping, or Updating CloudTrail
+      Type: AWS::IAM::ManagedPolicy
+      Properties:
+          ManagedPolicyName: Policy-DenyCloudTrailDelete
+          PolicyDocument:
+              Version: 2012-10-17
+              Statement:
+                - Effect: Deny
+                  Action:
+                    - cloudtrail:DeleteTrail
+                    - cloudtrail:StopLogging
+                    - cloudtrail:UpdateTrail
+                  Resource: '*'
+          Roles:
+            - !Ref rSystemAdministratorRole
+            - !Ref rBillingRole
+            - !Ref rDatabaseAdministratorRole
+            - !Ref rDataScientistRole
+            - !Ref rNetworkAdministratorRole
+            - !Ref rPowerUserRole
+            - !Ref rSecurityAuditRole
+            - !Ref rSupportUserRole
+            - !Ref rViewOnlyAccessRole
+  rDenyKMSDeletePolicy:   #This policy prevents Roles and Groups from Revoking, Disabling, or Deleting KMS
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+        ManagedPolicyName: Policy-DenyKMSDelete
+        PolicyDocument:
+            Statement:
+              - Effect: Deny
+                Action:
+                  - kms:Delete*
+                  - kms:Disable*
+                  - kms:Revoke*
+                Resource: '*'
+            Version: 2012-10-17
+        Roles:
+          - !Ref rBillingRole
+          - !Ref rDatabaseAdministratorRole
+          - !Ref rDataScientistRole
+          - !Ref rNetworkAdministratorRole
+          - !Ref rPowerUserRole
+          - !Ref rSecurityAuditRole
+          - !Ref rSupportUserRole
+          - !Ref rSystemAdministratorRole
+          - !Ref rViewOnlyAccessRole
+  rNetworkAdministratorRole:  #Grants full access permissions to AWS services and actions required to set up and configure AWS network resources.
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub
+      - "${Provider}-${Role}"
+      - { Role: !Ref pNetworkAdministratorRole, Provider: !Ref pFederationProvider}
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/job-function/NetworkAdministrator
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                !Sub
+                  - "arn:aws:iam::${AWS::AccountId}:saml-provider/${Provider}"
+                  - { Provider: !Ref pFederationProvider }
+            Action:
+              - "sts:AssumeRoleWithSAML"
+            Condition:
+              StringEquals:
+                SAML:aud: "https://signin.aws.amazon.com/saml"
+  rPowerUserRole: #This role provides full access to AWS services and resources, but does not allow management of Users and groups.
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub
+      - "${Provider}-${Role}"
+      - { Role: !Ref pPowerUserRole, Provider: !Ref pFederationProvider}
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/PowerUserAccess
+        - arn:aws:iam::aws:policy/AWSLambdaFullAccess
+        - arn:aws:iam::aws:policy/AWSGlueConsoleFullAccess
+        - arn:aws:iam::aws:policy/IAMFullAccess
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                !Sub
+                  - "arn:aws:iam::${AWS::AccountId}:saml-provider/${Provider}"
+                  - { Provider: !Ref pFederationProvider }
+            Action:
+              - "sts:AssumeRoleWithSAML"
+            Condition:
+              StringEquals:
+                SAML:aud: "https://signin.aws.amazon.com/saml"
+  rSecurityAuditRole: #This role grants access to read security configuration metadata. It is useful for software that audits the configuration of an AWS account.
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub
+      - "${Provider}-${Role}"
+      - { Role: !Ref pSecurityAuditRole, Provider: !Ref pFederationProvider}
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/SecurityAudit
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                !Sub
+                  - "arn:aws:iam::${AWS::AccountId}:saml-provider/${Provider}"
+                  - { Provider: !Ref pFederationProvider }
+            Action:
+              - "sts:AssumeRoleWithSAML"
+            Condition:
+              StringEquals:
+                SAML:aud: "https://signin.aws.amazon.com/saml"
+  rSupportUserRole:   #This role grants permissions to troubleshoot and resolve issues in an AWS account. This policy also enables the user to contact AWS support to create and manage cases.
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub
+      - "${Provider}-${Role}"
+      - { Role: !Ref pSupportUserRole, Provider: !Ref pFederationProvider}
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/job-function/SupportUser
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                !Sub
+                  - "arn:aws:iam::${AWS::AccountId}:saml-provider/${Provider}"
+                  - { Provider: !Ref pFederationProvider }
+            Action:
+              - "sts:AssumeRoleWithSAML"
+            Condition:
+              StringEquals:
+                SAML:aud: "https://signin.aws.amazon.com/saml"
+  rSystemAdministratorRole:   #Grants full access permissions necessary for resources required for application and development operations.
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub
+      - "${Provider}-${Role}"
+      - { Role: !Ref pSystemAdministratorRole, Provider: !Ref pFederationProvider}
+      ManagedPolicyArns:
+        - !Ref rEnhancedSystemAdmnistratorPolicy
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                !Sub
+                  - "arn:aws:iam::${AWS::AccountId}:saml-provider/${Provider}"
+                  - { Provider: !Ref pFederationProvider }
+            Action:
+              - "sts:AssumeRoleWithSAML"
+            Condition:
+              StringEquals:
+                SAML:aud: "https://signin.aws.amazon.com/saml"
+  rViewOnlyAccessRole:    #This role grants permissions to view resources and basic metadata across all AWS services.
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub
+      - "${Provider}-${Role}"
+      - { Role: !Ref pViewOnlyAccessRole, Provider: !Ref pFederationProvider}
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/job-function/ViewOnlyAccess
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                !Sub
+                  - "arn:aws:iam::${AWS::AccountId}:saml-provider/${Provider}"
+                  - { Provider: !Ref pFederationProvider }
+            Action:
+              - "sts:AssumeRoleWithSAML"
+            Condition:
+              StringEquals:
+                SAML:aud: "https://signin.aws.amazon.com/saml"
+  rSecurityAdministratorRole:   #Grants full access permissions necessary for resources required for application and development operations.
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub
+      - "${Provider}-${Role}"
+      - { Role: !Ref pSecurityAdministratorRole, Provider: !Ref pFederationProvider}
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/job-function/SystemAdministrator
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                !Sub
+                  - "arn:aws:iam::${AWS::AccountId}:saml-provider/${Provider}"
+                  - { Provider: !Ref pFederationProvider }
+            Action:
+              - "sts:AssumeRoleWithSAML"
+            Condition:
+              StringEquals:
+                SAML:aud: "https://signin.aws.amazon.com/saml"
