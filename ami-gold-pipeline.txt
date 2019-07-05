@@ -1,0 +1,65 @@
+account:amzcloud
+
+publishing to all accounts
+system manager
+
+documents
+rhel7
+win2012
+win2016
+
+command 
+
+--- aws ssm start-automation-execution --document-name "amiAutoALL" ---
+
+param store --- > lastestwin2012 ---edit put the latest image (repeat for both 2)
+
+run the batch script 
+
+creates the ami
+
+account share
+shareami document
+
+lambda share
+
+
+region share
+copyAMItoRegions
+
+
+got each region and get the amid
+
+update param store with the amiid
+
+
+
+make sure launch an instacne with each image 
+
+
+---update the hub site ----
+
+--- update the JSON -----
+
+
+
+--- clean nexpose scan
+
+--- request nextpose scan
+
+
+
+update doc --- note version 
+
+update doc version in the linked lambda
+
+
+
+done
+
+win2012 
+rhel
+
+
+wait
+win2016 -- ami-0e4a3413e031bb2cd
