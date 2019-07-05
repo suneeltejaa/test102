@@ -1,0 +1,27 @@
+policies:
+
+  - name: iam-attach-ssm-policy
+    resource: iam-role
+    mode:
+      type: periodic
+      role: arn:aws:iam::452127281478:role/CloudCustodian-plugprd
+      schedule: "cron(0 17 * * ? *)"
+    filters:
+      - type: no-specific-managed-policy
+        value: AmazonEC2RoleforSSM
+    actions:
+      - type: set-policy
+        state: attached
+        arn: arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
+
+  - name: set-ec2-ssm-instance-profile
+    resource: ec2
+    mode:
+      type: periodic
+      role: arn:aws:iam::452127281478:role/CloudCustodian-plugprd
+      schedule: "cron(0 17 * * ? *)"
+    filters:
+       - IamInstanceProfile: absent
+    actions:
+       - type: set-instance-profile
+         name: AAA-SSM-Maint-Role

@@ -1,0 +1,70 @@
+policies:
+
+  - name: ebs-terminate-unencrypted
+    resource: ebs
+    mode:
+      type: periodic
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      schedule: "cron(0 13 * * ? *)"
+    filters:
+      - Encrypted: false
+      - type: value
+        key: "Attachments[0].Device"
+        op: not-in
+        value:
+          - /dev/sda1
+          - /dev/xvdf
+    actions:
+      - delete
+      - type: notify
+        template: default.html
+        priority_header: 3
+        subject: "EBS Unencrypted !!!! - [custodian {{ account }} - {{ region }}]"
+        violation_desc: |
+          "Your EBS is Unencrypted."
+        action_desc: |
+          "Actions Taken:  The EBS volume has been terminted.
+          Please apply for exception if you need an Unencrypted volume."
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - csops_alerts@spglobal.com
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1
+
+  - name: ebs-terminate-unencrypted-oncreate
+    resource: ebs
+    mode:
+        type: cloudtrail
+        role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+        events:
+          - CreateVolume
+    filters:
+      - Encrypted: false
+      - type: value
+        key: "Attachments[0].Device"
+        op: not-in
+        value:
+          - /dev/sda1
+          - /dev/xvdf
+    actions:
+      - delete
+      - type: notify
+        template: default.html
+        priority_header: 3
+        subject: "EBS Unencrypted !!!! - [custodian {{ account }} - {{ region }}]"
+        violation_desc: |
+          "Your EBS is Unencrypted."
+        action_desc: |
+          "Actions Taken:  The EBS volume has been terminted.
+          Please apply for exception if you need an Unencrypted volume."
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - csops_alerts@spglobal.com
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1

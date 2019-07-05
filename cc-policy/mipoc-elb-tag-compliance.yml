@@ -1,0 +1,66 @@
+vars:
+  tag-filters: &tag-compliance-filters
+        - "tag:BU": absent
+        - "tag:Owner": absent
+        - "tag:AppID": absent
+        - "tag:Environment": absent
+
+policies:
+
+  - name: elb-tag-compliance
+    mode:
+      type: cloudtrail
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      events:
+        - source: elasticloadbalancing.amazonaws.com
+          event: CreateLoadBalancer
+          ids: "requestParameters.loadBalancerName"
+    resource: elb
+    filters:
+      - or: *tag-compliance-filters
+      - "tag:cc-exception": absent
+    actions:
+        - type: delete
+        - type: notify
+          template: default.html
+          priority_header: 1
+          subject: "Elastic Load Balancer- !!!! Missing Required Tags !!!! - [custodian {{ account }} - {{ region }}]"
+          violation_desc: "Your Elastic Load Balancer is missing the required tags."
+          action_desc: |
+            "Actions Taken:  The Elastic Load Balancer has been deleted as it doesn't meet tagging requirements.
+            Please tag your Elastic Load Balancer with following standard: https://thehub.spglobal.com/docs/DOC-120279-tag-youre-it."
+          to:
+              - mi-aws-cloudcustodian@spglobal.com
+              - resource-owner
+              - event-owner
+              - csops_alerts@spglobal.com
+          transport:
+              type: sqs
+              queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+              region: us-east-1
+
+  - name: elb-tag-compliance-legacy
+    mode:
+      type: periodic
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      schedule: "cron(0 13 * * ? *)"
+    resource: elb
+    filters:
+      - or: *tag-compliance-filters
+      - "tag:cc-exception": absent
+    actions:
+        - type: notify
+          template: default.html
+          priority_header: 1
+          subject: "Elastic Load Balancer- !!!! Missing Required Tags !!!! - [custodian {{ account }} - {{ region }}]"
+          violation_desc: "Your Elastic Load Balancer is missing the required tags."
+          action_desc: |
+            "Please tag your Elastic Load Balancer with following standard: https://thehub.spglobal.com/docs/DOC-120279-tag-youre-it."
+          to:
+              - mi-aws-cloudcustodian@spglobal.com
+              - resource-owner
+              - csops_alerts@spglobal.com
+          transport:
+              type: sqs
+              queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+              region: us-east-1

@@ -1,0 +1,15 @@
+policies:
+
+  - name: enable-key-rotation
+    resource: kms-key
+    mode:
+      type: periodic
+      role: arn:aws:iam::452127281478:role/CloudCustodian-plugprd
+      schedule: "cron(0 20 * * ? *)"
+    filters:
+      - type: key-rotation-status
+        key: KeyRotationEnabled
+        value: False
+    actions:
+      - type: set-rotation
+        state: True

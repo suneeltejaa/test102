@@ -1,0 +1,12 @@
+policies:
+
+  - name: rds-offhours-stop
+    resource: rds
+    mode:
+      type: periodic
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      schedule: "cron(0 6 ? * SAT *)"
+    filters:
+       - "tag:offhour_exception": absent
+    actions:
+      - stop

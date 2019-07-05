@@ -1,0 +1,125 @@
+policies:
+- name: unapproved-ami-mark
+  resource: ec2
+  mode:
+    type: cloudtrail
+    role: arn:aws:iam::172185050124:role/CloudCustodian-cladrstg
+    events:
+    - RunInstances
+  filters:
+    - type: value
+      key: ImageId
+      op: not-in
+      value:
+###RHEL7
+          - ami-01d32f084b90da93e # 20190530
+          - ami-002488944191e1656 # 20190530
+          - ami-0666bfad6fdc948c9 # 20190530
+          - ami-01b950167ae4a9796 # 20190530
+          - ami-02b7b920b89ac5421 # 20190516
+          - ami-071800bb75a644ea6 # 20190516
+          - ami-00d5e5fd48bb95b9d # 20190516
+          - ami-076fc50ed8d69a5cf # 20190516
+          - ami-0362f0f5653f2f794 # 20190328
+          - ami-0a80489e87ddbc1fa # 20190328
+          - ami-0ec18445d46ff96c1 # 20190328
+          - ami-025f03a5229752f46 # 20190328
+          - ami-0b3ec8e227fba58d2 # 20191403
+          - ami-0ff4c65cc70960af2 # 20191403
+          - ami-062d9db0bfb966590 # 20191403
+          - ami-04b3bb5bad78fadab # 20191403
+          - ami-0994af9be949e9bc0 # 20190201
+          - ami-074d74425468875ed # 20190201
+          - ami-07b726460597b1800 # 20190201
+          - ami-0f86320f1b677cd27 # 20190201
+###win2k12
+          - ami-001a20cedb76d1e32 # 20190530
+          - ami-0d64c006e3937fc10 # 20190530
+          - ami-09c935e4ae8d8e930 # 20190530
+          - ami-0f4547e864d5b9971 # 20190530
+          - ami-0961b17017ccecd83 # 20190516
+          - ami-085c1feaf484350e5 # 20190516
+          - ami-0262cf0f24a031164 # 20190516
+          - ami-0cf515664eba81e03 # 20190516
+          - ami-0543ad31b7f9e479b # 20190328
+          - ami-0dd4f77992a214635 # 20190328
+          - ami-0086a80ce40842e04 # 20190328
+          - ami-0903ba0a61cf2b786 # 20190328
+          - ami-0abba695dd8e46714 # 20190227
+          - ami-08ba736bebac46bdc # 20190227
+          - ami-08c29894aee7b4a0a # 20190227
+          - ami-083c6fab395b7f7ca # 20190227
+          - ami-005440c18712f80ef # 20190201
+          - ami-02e69f425c76698ef # 20190201
+          - ami-097e563713145ba58 # 20190201
+          - ami-0255f0a07f1bc746a # 20190201
+###win2016
+          - ami-0e5a83d5afa71cc6a # 20190530
+          - ami-09687f732554c6839 # 20190530
+          - ami-06369786bb40d1294 # 20190530
+          - ami-00f333118d2631114 # 20190530
+          - ami-05dc0673d8e7f0dcc # 20190516
+          - ami-03dae53a2a530b702 # 20190516
+          - ami-0b500b41cbf154e06 # 20190516
+          - ami-0cb51fa1f0b9dd194 # 20190516
+          - ami-08f87a569a9e645ec # 20190328
+          - ami-0908ccb9a1a245b35 # 20190328
+          - ami-0e4c08e845b04091d # 20190328
+          - ami-02b015b6406ba1494 # 20190328
+          - ami-0d7c5d216b1f4b735 # 20190227
+          - ami-0983c431f2127cfda # 20190227
+          - ami-00ce76dba9c1a4ea9 # 20190227
+          - ami-03cc92bac780c8572 # 20190227
+          - ami-0abf13be2d788ccbf # 20190201
+          - ami-099faf7a0c5575e3b # 20190201
+          - ami-0289ba47469957e2c # 20190201
+          - ami-0abf16f9566ea91de # 20190201
+###Linux2
+          - ami-094e3573bab9ff2a0 # 20190530
+          - ami-052fe5aa4858b139b # 20190530
+          - ami-01f1902894c3d04c5 # 20190530
+          - ami-0e6adf7033bd21345 # 20190530
+          - ami-0f6522b70f069dbaf # 20190516
+          - ami-0081454717e019b0b # 20190516
+          - ami-0479e8e6b3e351066 # 20190516
+          - ami-020975581d970a29a # 20190516
+### Non Standard AMI's
+###win2k12
+          - ami-04b9e92b3995ccc6c # added 20191601
+          - ami-0e9be9c98bcf67b37 # added 20191601
+    - "tag:cc-exception": absent
+    - "tag:aws:autoscaling:groupName": absent
+    - "tag:Unapproved_AMI": absent
+  actions:
+    - type: mark
+      tag: "Unapproved_AMI"
+      value: "true"
+
+- name: stop-unapproved-ami
+  resource: ec2
+  mode:
+    type: periodic
+    role: arn:aws:iam::172185050124:role/CloudCustodian-cladrstg
+    schedule: "cron(0 13 * * ? *)"
+  filters:
+    - "State.Name": running
+    - "tag:cc-exception": absent
+    - "tag:Unapproved_AMI": not-null
+  actions:
+    - type: notify
+      template: default.html
+      priority_header: 2
+      subject: "Unapproved AMI -[custodian {{ account }} - {{ region }}]"
+      violation_desc: "An EC2 instance that is using an unapproved AMI has been created:"
+      action_desc: |
+          "Actions Taken:  The Violating Ec2 Instance Will Be Stopped As It
+          Violates S&P Global's Security Cloud Policy. Please Rebuild your environment with the latest Standard Base AMI: https://thehub.spglobal.com/docs/DOC-120663-spgi-amis"
+      to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - event-owner
+          - csops_alerts@spglobal.com
+      transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1

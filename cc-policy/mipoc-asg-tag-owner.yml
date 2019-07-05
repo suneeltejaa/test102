@@ -1,0 +1,30 @@
+policies:
+
+  - name: asg-tag-owner
+    resource: asg
+    mode:
+        type: cloudtrail
+        role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+        events:
+          - CreateAutoScalingGroup
+    filters:
+      - "tag:Owner": absent
+    actions:
+      - type: notify
+        template: default.html
+        priority_header: 3
+        subject: "ASG - !!!! Missing Owner Tag !!!! - [custodian {{ account }} - {{ region }}]"
+        violation_desc: |
+          "Your ASG is missing the "Owner" tag."
+        action_desc: |
+          "Actions Taken:  The ASG doesn't meet tagging requirements.
+          Please tag your ASG with the following standard: https://thehub.spglobal.com/docs/DOC-120279-tag-youre-it."
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - event-owner
+          - csops_alerts@spglobal.com
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1

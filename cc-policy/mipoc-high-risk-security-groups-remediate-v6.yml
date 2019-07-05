@@ -1,0 +1,100 @@
+policies:
+  - name: high-risk-security-groups-remediate-egress-v6
+    resource: security-group
+    description: |
+      Remove any rule from a security group that allows ::/0 egress
+      and notify the user  who added the violating rule.
+    mode:
+      type: cloudtrail
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      events:
+        - source: ec2.amazonaws.com
+          event: AuthorizeSecurityGroupIngress
+          ids: "requestParameters.groupId"
+        - source: ec2.amazonaws.com
+          event: AuthorizeSecurityGroupEgress
+          ids: "requestParameters.groupId"
+        - source: ec2.amazonaws.com
+          event: RevokeSecurityGroupEgress
+          ids: "requestParameters.groupId"
+        - source: ec2.amazonaws.com
+          event: RevokeSecurityGroupIngress
+          ids: "requestParameters.groupId"
+    filters:
+      - type: egress
+        Cidr:
+          value: "::/0"
+      - "tag:cc-exception": absent
+    actions:
+      - type: remove-permissions
+        ingress: matched
+      - type: notify
+        template: default.html
+        priority_header: 1
+        subject: "Open Security Group Rule Created-[custodian {{ account }} - {{ region }}]"
+        violation_desc: "Security Group(s) Which Had Rules Open To The World (egress):"
+        action_desc: |
+            "Actions Taken:  The Violating Security Group Rule Has Been Removed As It
+            Violates S&P Global's Security Cloud Policy."
+        to:
+            - patrick.horrigan@spglobal.com
+            - Kamil.Falana@spglobal.com
+            - Gaurav.Saxena@spglobal.com
+            - sri.pavan.tipirneni@spglobal.com
+            - resource-owner
+            - event-owner
+            - csops_alerts@spglobal.com
+        transport:
+            type: sqs
+            queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+            region: us-east-1
+
+  - name: high-risk-security-groups-remediate-ingress-v6
+    resource: security-group
+    description: |
+      Remove any rule from a security group that allows ::/0 ingress
+      and notify the user  who added the violating rule.
+    mode:
+      type: cloudtrail
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      events:
+        - source: ec2.amazonaws.com
+          event: AuthorizeSecurityGroupIngress
+          ids: "requestParameters.groupId"
+        - source: ec2.amazonaws.com
+          event: AuthorizeSecurityGroupEgress
+          ids: "requestParameters.groupId"
+        - source: ec2.amazonaws.com
+          event: RevokeSecurityGroupEgress
+          ids: "requestParameters.groupId"
+        - source: ec2.amazonaws.com
+          event: RevokeSecurityGroupIngress
+          ids: "requestParameters.groupId"
+    filters:
+      - type: ingress
+        Cidr:
+          value: "::/0"
+      - "tag:cc-exception": absent
+    actions:
+      - type: remove-permissions
+        ingress: matched
+      - type: notify
+        template: default.html
+        priority_header: 1
+        subject: "Open Security Group Rule Created-[custodian {{ account }} - {{ region }}]"
+        violation_desc: "Security Group(s) Which Had Rules Open To The World (ingress):"
+        action_desc: |
+            "Actions Taken:  The Violating Security Group Rule Has Been Removed As It
+            Violates S&P Global's Security Cloud Policy."
+        to:
+            - patrick.horrigan@spglobal.com
+            - Kamil.Falana@spglobal.com
+            - Gaurav.Saxena@spglobal.com
+            - sri.pavan.tipirneni@spglobal.com
+            - resource-owner
+            - event-owner
+            - csops_alerts@spglobal.com
+        transport:
+            type: sqs
+            queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+            region: us-east-1

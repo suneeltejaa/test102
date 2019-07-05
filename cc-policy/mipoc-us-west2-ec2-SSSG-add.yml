@@ -1,0 +1,56 @@
+vars:
+  state-filter: &state-filter
+    - "State.Name": running
+    - "State.Name": stopped
+policies:
+
+ - name: mipoc-ec2-vpc-5a39c03c-SSSG-add
+   resource: ec2
+   mode:
+     type: periodic
+     role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+     schedule: "cron(0 5 * * ? *)"
+   comments: |
+     policy to attach SSSG to ec2 instances.
+   filters:
+     - or: *state-filter
+     - type: security-group
+       value_type: resource_count
+       op: lt
+       value: 5
+     - type: value
+       key: GroupId
+       op: not-in
+       value: 
+         - sg-0d7628a5443674f96
+     - type: value
+       key: VpcId
+       op: equal
+       value: vpc-5a39c03c
+   actions:
+     - type: modify-security-groups
+       add: sg-0d7628a5443674f96
+
+ - name: mipoc-ec2-vpc-5a39c03c-event-SSSG-add
+   resource: ec2
+   mode:
+     type: cloudtrail
+     role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+     events:
+       - RunInstances
+   comments: |
+     policy to attach SSSG to ec2 instances.
+   filters:
+     - type: value
+       key: GroupId
+       op: not-in
+       value: 
+         - sg-0d7628a5443674f96
+     - type: value
+       key: VpcId
+       op: equal
+       value: vpc-5a39c03c
+   actions:
+     - type: modify-security-groups
+       add: sg-0d7628a5443674f96
+

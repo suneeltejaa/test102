@@ -1,0 +1,28 @@
+policies:
+- name: remove-premissions-sqs
+  resource: sqs
+  mode:
+    type: periodic
+    role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+    schedule: "cron(0 13 * * ? *)"
+  filters:
+    - type: cross-account
+  actions:
+    - type: remove-statements
+      statement_ids: matched
+    - type: notify
+      template: default.html
+      priority_header: 2
+      subject: "Public SQS Queue-[custodian {{ account }} - {{ region }}]"
+      violation_desc: "A sqs queue that is exposed to the world has been created:"
+      action_desc: |
+          "Actions Taken:  The Violating SQS Queue has had the Permissions removed (Principal: Everybody) As It
+          Violates S&P Global's Security Cloud Policy."
+      to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - csops_alerts@spglobal.com
+      transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1

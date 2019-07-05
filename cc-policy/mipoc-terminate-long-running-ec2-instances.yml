@@ -1,0 +1,72 @@
+policies:
+- name: terminate-long-running-ec2-instances
+  resource: ec2
+  mode:
+    type: periodic
+    role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+    schedule: "cron(0 13 * * ? *)"
+  comments: |
+    Delete instances in the aws account that has been
+    running more than 60 day
+  filters:
+    - "tag:cc-exception": absent
+    - "tag:aws:autoscaling:groupName": absent
+    - type: value
+      key: LaunchTime
+      op: greater-than
+      value_type: age
+      value: 60
+  actions:
+    - type: terminate
+      force: true
+    - type: notify
+      template: default.html
+      priority_header: 1
+      subject: "EC2 - Older than 60-days - [custodian {{ account }} - {{ region }}]"
+      violation_desc: |
+        "Your EC2 instance is older than 60-days."
+      action_desc: |
+        "Actions Taken: The instance(s) has been terminated. Please Rebuild your instance with the latest Standard Base AMI: https://thehub.spglobal.com/docs/DOC-120663-spgi-amis"
+      to:
+        - mi-aws-cloudcustodian@spglobal.com
+        - resource-owner
+        - csops_alerts@spglobal.com
+      transport:
+        type: sqs
+        queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+        region: us-east-1
+
+- name: terminate-long-running-ec2-instances-30-day
+  resource: ec2
+  mode:
+    type: periodic
+    role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+    schedule: "cron(0 13 * * ? *)"
+  comments: |
+    Notify instances in the aws account that has been
+    running more than 30 days
+  filters:
+    - "tag:cc-exception": absent
+    - "tag:aws:autoscaling:groupName": absent
+    - type: value
+      key: LaunchTime
+      op: greater-than
+      value_type: age
+      value: 31
+  actions:
+    - type: notify
+      template: default.html
+      priority_header: 1
+      subject: "EC2 - Older than 30-days - [custodian {{ account }} - {{ region }}]"
+      violation_desc: |
+        "Your EC2 instance is older than 30-days."
+      action_desc: |
+        "Actions Taken: The instance will be terminated at 60-days. Please Rebuild your environment with the latest Standard Base AMI: https://thehub.spglobal.com/docs/DOC-120663-spgi-amis"
+      to:
+        - mi-aws-cloudcustodian@spglobal.com
+        - resource-owner
+        - csops_alerts@spglobal.com
+      transport:
+        type: sqs
+        queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+        region: us-east-1

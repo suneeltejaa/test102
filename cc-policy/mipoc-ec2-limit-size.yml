@@ -1,0 +1,51 @@
+policies:
+
+  - name: ec2-limit-size
+    resource: ec2
+    mode:
+      type: cloudtrail
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      events:
+        - RunInstances
+    filters:
+      - type: value
+        key: InstanceType
+        op: not-in
+        value:
+          - m5.large
+          - t2.micro
+          - t2.nano
+          - t2.small
+          - t3a.medium
+          - t3a.micro
+          - t3a.nano
+          - t3a.small
+      - "tag:size-exception": absent
+    actions:
+      - type: terminate
+      - type: notify
+        template: default.html
+        priority_header: 1
+        subject: "EC2- !!!! Invalid Instance Type !!!! - [custodian {{ account }} - {{ region }}]"
+        violation_desc: "Your EC2 is using an invalid instance type."
+        action_desc: |
+          "Actions Taken:  The EC2 has been termintaed.
+          Please use a valid instance type or apply for exception.
+          Valid Instance Types:
+             m5.large
+             t2.micro
+             t2.nano
+             t2.small
+             t3a.medium
+             t3a.micro
+             t3a.nano
+             t3a.small"
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - event-owner
+          - csops_alerts@spglobal.com
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1

@@ -1,0 +1,317 @@
+policies:
+
+  - name: terminate-long-running-elb
+    resource: elb
+    mode:
+      type: periodic
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      schedule: "cron(0 13 * * ? *)"
+    filters:
+      - "tag:cc-exception": absent
+      - type: value
+        key: CreatedTime
+        op: greater-than
+        value_type: age
+        value: 60
+    actions:
+      - delete
+      - type: notify
+        template: default.html
+        priority_header: 1
+        subject: "ELB - Older than 60-days - [custodian {{ account }} - {{ region }}]"
+        violation_desc: |
+          "Your ELB instance is older than 60-days."
+        action_desc: |
+          "Actions Taken: The ELB has been terminated."
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - csops_alerts@spglobal.com
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1
+
+  - name: terminate-long-running-elb-notify
+    resource: elb
+    mode:
+      type: periodic
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      schedule: "cron(0 13 * * ? *)"
+    filters:
+      - "tag:cc-exception": absent
+      - type: value
+        key: CreatedTime
+        op: greater-than
+        value_type: age
+        value: 30
+    actions:
+      - type: notify
+        template: default.html
+        priority_header: 1
+        subject: "ELB - Older than 30-days - [custodian {{ account }} - {{ region }}]"
+        violation_desc: |
+          "Your ELB instance is older than 30-days."
+        action_desc: |
+          "Actions Taken: The ELB will be terminated at 60-days"
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - csops_alerts@spglobal.com
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1
+
+  - name: terminate-long-running-redshift
+    resource: redshift
+    mode:
+      type: periodic
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      schedule: "cron(0 13 * * ? *)"
+    filters:
+      - "tag:cc-exception": absent
+      - type: value
+        key: ClusterCreateTime
+        op: greater-than
+        value_type: age
+        value: 60
+    actions:
+      - type: delete
+        skip-snapshot: false
+      - type: notify
+        template: default.html
+        priority_header: 1
+        subject: "Redshift - Older than 60-days - [custodian {{ account }} - {{ region }}]"
+        violation_desc: |
+          "Your redshift instance is older than 60-days."
+        action_desc: |
+          "Actions Taken: The redshift has been terminated."
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - csops_alerts@spglobal.com
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1
+
+  - name: terminate-long-running-redshift-notify
+    resource: redshift
+    mode:
+      type: periodic
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      schedule: "cron(0 13 * * ? *)"
+    filters:
+      - "tag:cc-exception": absent
+      - type: value
+        key: ClusterCreateTime
+        op: greater-than
+        value_type: age
+        value: 30
+    actions:
+      - type: notify
+        template: default.html
+        priority_header: 1
+        subject: "Redshift - Older than 30-days - [custodian {{ account }} - {{ region }}]"
+        violation_desc: |
+          "Your redshift instance is older than 30-days."
+        action_desc: |
+          "Actions Taken: The redshift will be terminated at 60-days"
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - csops_alerts@spglobal.com
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1
+
+  - name: terminate-long-running-asg
+    resource: asg
+    mode:
+      type: periodic
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      schedule: "cron(0 13 * * ? *)"
+    filters:
+      - "tag:cc-exception": absent
+      - type: value
+        key: CreatedTime
+        op: greater-than
+        value_type: age
+        value: 60
+    actions:
+      - type: delete
+      - type: notify
+        template: default.html
+        priority_header: 1
+        subject: "ASG - Older than 60-days - [custodian {{ account }} - {{ region }}]"
+        violation_desc: |
+          "Your asg instance is older than 60-days."
+        action_desc: |
+          "Actions Taken: The asg has been terminated."
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - csops_alerts@spglobal.com
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1
+
+  - name: terminate-long-running-asg-notify
+    resource: asg
+    mode:
+      type: periodic
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      schedule: "cron(0 13 * * ? *)"
+    filters:
+      - "tag:cc-exception": absent
+      - type: value
+        key: CreatedTime
+        op: greater-than
+        value_type: age
+        value: 30
+    actions:
+      - type: notify
+        template: default.html
+        priority_header: 1
+        subject: "ASG - Older than 30-days - [custodian {{ account }} - {{ region }}]"
+        violation_desc: |
+          "Your asg instance is older than 30-days."
+        action_desc: |
+          "Actions Taken: The asg will be terminated at 60-days"
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - csops_alerts@spglobal.com
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1
+
+  - name: terminate-long-running-eks
+    resource: eks
+    mode:
+      type: periodic
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      schedule: "cron(0 13 * * ? *)"
+    filters:
+      - "tag:cc-exception": absent
+      - type: value
+        key: createdAt
+        op: greater-than
+        value_type: age
+        value: 60
+    actions:
+      - type: delete
+      - type: notify
+        template: default.html
+        priority_header: 1
+        subject: "eks - Older than 60-days - [custodian {{ account }} - {{ region }}]"
+        violation_desc: |
+          "Your eks instance is older than 60-days."
+        action_desc: |
+          "Actions Taken: The eks has been terminated."
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - csops_alerts@spglobal.com
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1
+
+  - name: terminate-long-running-eks-notify
+    resource: eks
+    mode:
+      type: periodic
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      schedule: "cron(0 13 * * ? *)"
+    filters:
+      - "tag:cc-exception": absent
+      - type: value
+        key: createdAt
+        op: greater-than
+        value_type: age
+        value: 30
+    actions:
+      - type: notify
+        template: default.html
+        priority_header: 1
+        subject: "eks - Older than 30-days - [custodian {{ account }} - {{ region }}]"
+        violation_desc: |
+          "Your eks instance is older than 30-days."
+        action_desc: |
+          "Actions Taken: The eks will be terminated at 60-days"
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - csops_alerts@spglobal.com
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1
+
+  - name: terminate-long-running-dynamodb-table
+    resource: dynamodb-table
+    mode:
+      type: periodic
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      schedule: "cron(0 13 * * ? *)"
+    filters:
+      - "tag:cc-exception": absent
+      - type: value
+        key: CreationDateTime
+        op: greater-than
+        value_type: age
+        value: 60
+    actions:
+      - type: delete
+      - type: notify
+        template: default.html
+        priority_header: 1
+        subject: "eks - Older than 60-days - [custodian {{ account }} - {{ region }}]"
+        violation_desc: |
+          "Your dynamodb-table instance is older than 60-days."
+        action_desc: |
+          "Actions Taken: The dynamodb-table has been terminated."
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - csops_alerts@spglobal.com
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1
+
+  - name: terminate-long-running-dynamodb-table-notify
+    resource: dynamodb-table
+    mode:
+      type: periodic
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      schedule: "cron(0 13 * * ? *)"
+    filters:
+      - "tag:cc-exception": absent
+      - type: value
+        key: CreationDateTime
+        op: greater-than
+        value_type: age
+        value: 30
+    actions:
+      - type: notify
+        template: default.html
+        priority_header: 1
+        subject: "dynamodb-table - Older than 30-days - [custodian {{ account }} - {{ region }}]"
+        violation_desc: |
+          "Your dynamodb-table instance is older than 30-days."
+        action_desc: |
+          "Actions Taken: The dynamodb-table will be terminated at 60-days"
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - csops_alerts@spglobal.com
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1

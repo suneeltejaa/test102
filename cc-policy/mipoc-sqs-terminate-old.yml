@@ -1,0 +1,33 @@
+policies:
+
+  - name: remove-old-sqs
+    resource: sqs
+    mode:
+      type: periodic
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      schedule: "cron(0 13 * * ? *)"
+    filters:
+      - type: value
+        key: CreatedTimestamp
+        value_type: age
+        value: 60
+        op: greater-than
+      - "tag:cc-exception": absent
+    actions:
+      - delete
+      - type: notify
+        template: default.html
+        priority_header: 2
+        subject: "Old SQS Queue-[custodian {{ account }} - {{ region }}]"
+        violation_desc: "A sqs queue that is over 60 days old still exists"
+        action_desc: |
+            "Actions Taken:  The Violating SQS Queue has been deleted As It
+            Violates S&P Global's Security Cloud Policy."
+        to:
+            - mi-aws-cloudcustodian@spglobal.com
+            - resource-owner
+            - csops_alerts@spglobal.com
+        transport:
+            type: sqs
+            queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+            region: us-east-1

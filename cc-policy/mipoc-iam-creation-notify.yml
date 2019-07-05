@@ -1,0 +1,143 @@
+policies:
+
+  # - name: iam-user-notify
+  #   resource: iam-user
+  #   mode:
+  #     type: cloudtrail
+  #     role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+  #     events:
+  #       - source: iam.amazonaws.com
+  #         event: CreateUser
+  #         ids: "requestParameters.userName"
+  #       - source: iam.amazonaws.com
+  #         event: AttachUserPolicy
+  #         ids: "requestParameters.userName"
+  #       - source: iam.amazonaws.com
+  #         event: AddUserToGroup
+  #         ids: "requestParameters.userName"
+  #       - source: iam.amazonaws.com
+  #         event: CreateLoginProfile
+  #         ids: "requestParameters.userName"
+  #   actions:
+  #     - type: notify
+  #       template: default.html
+  #       priority_header: 2
+  #       subject: "IAM User Created or updated - [custodian {{ account }} - {{ region }}]"
+  #       violation_desc: |
+  #         "The following IAM User was created/updated."
+  #       action_desc: |
+  #         "Actions Taken:  None."
+  #       to:
+  #         - mi-aws-cloudcustodian@spglobal.com
+  #         - resource-owner
+  #         - csops_alerts@spglobal.com
+  #         - event-owner
+  #       transport:
+  #         type: sqs
+  #         queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+  #         region: us-east-1
+
+  - name: iam-group-notify
+    resource: iam-group
+    mode:
+      type: cloudtrail
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      events:
+        - source: iam.amazonaws.com
+          event: AddUserToGroup
+          ids: "requestParameters.userName"
+        - source: iam.amazonaws.com
+          event: CreateGroup
+          ids: "requestParameters.userName"
+        - source: iam.amazonaws.com
+          event: AttachGroupPolicy
+          ids: "requestParameters.userName"
+    actions:
+      - type: notify
+        template: default.html
+        priority_header: 2
+        subject: "IAM group Created or updated - [custodian {{ account }} - {{ region }}]"
+        violation_desc: |
+          "The following IAM group was created/updated."
+        action_desc: |
+          "Actions Taken:  None."
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - csops_alerts@spglobal.com
+          - event-owner
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1
+
+  - name: iam-policy-notify
+    resource: iam-policy
+    mode:
+      type: cloudtrail
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      events:
+        - source: iam.amazonaws.com
+          event: CreatePolicy
+          ids: "requestParameters.userName"
+        - source: iam.amazonaws.com
+          event: AttachRolePolicy
+          ids: "requestParameters.userName"
+        - source: iam.amazonaws.com
+          event: CreatePolicyVersion
+          ids: "requestParameters.userName"
+        - source: iam.amazonaws.com
+          event: AttachUserPolicy
+          ids: "requestParameters.userName"
+    actions:
+      - type: notify
+        template: default.html
+        priority_header: 2
+        subject: "IAM policy Created or updated - [custodian {{ account }} - {{ region }}]"
+        violation_desc: |
+          "The following IAM policy was created/updated."
+        action_desc: |
+          "Actions Taken:  None."
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - csops_alerts@spglobal.com
+          - event-owner
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1
+
+  - name: iam-role-notify
+    resource: iam-role
+    mode:
+      type: cloudtrail
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      events:
+        - source: iam.amazonaws.com
+          event: CreateRole
+          ids: "requestParameters.userName"
+        - source: iam.amazonaws.com
+          event: AttachRolePolicy
+          ids: "requestParameters.userName"
+        - source: iam.amazonaws.com
+          event: UpdateAssumeRolePolicy
+          ids: "requestParameters.userName"
+    actions:
+      - type: notify
+        template: default.html
+        priority_header: 2
+        subject: "IAM role Created or updated - [custodian {{ account }} - {{ region }}]"
+        violation_desc: |
+          "The following IAM role was created/updated."
+        action_desc: |
+          "Actions Taken:  None."
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - csops_alerts@spglobal.com
+          - event-owner
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1

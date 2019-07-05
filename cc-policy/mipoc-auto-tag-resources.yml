@@ -1,0 +1,154 @@
+policies:
+
+  - name: rds-auto-tag-user
+    resource: rds
+    mode:
+      type: cloudtrail
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      events:
+        - CreateDBInstance
+    filters:
+      - "tag:owner": absent
+      - "tag:creatorid": absent
+    actions:
+      - type: auto-tag-user
+        tag: creatorid
+
+
+
+  - name: asg-auto-tag-user
+    resource: asg
+    mode:
+        type: cloudtrail
+        role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+        events:
+          - CreateAutoScalingGroup
+    filters:
+      - "tag:owner": absent
+      - "tag:creatorid": absent
+    actions:
+      - type: auto-tag-user
+        tag: creatorid
+
+
+
+  - name: elb-auto-tag-user
+    resource: elb
+    mode:
+      type: cloudtrail
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      events:
+        - source: elasticloadbalancing.amazonaws.com
+          event: CreateLoadBalancer
+          ids: "requestParameters.loadBalancerName"
+    filters:
+      - "tag:owner": absent
+      - "tag:creatorid": absent
+    actions:
+      - type: auto-tag-user
+        tag: creatorid
+
+
+
+  - name: s3-auto-tag-user
+    resource: s3
+    mode:
+      type: cloudtrail
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      events:
+        - CreateBucket
+    filters:
+      - "tag:owner": absent
+      - "tag:creatorid": absent
+    actions:
+      - type: auto-tag-user
+        tag: creatorid
+
+
+  - name: ecs-auto-tag-user
+    resource: ecs
+    mode:
+      type: cloudtrail
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      events:
+        - source: ecs.amazonaws.com
+          event: CreateCluster
+          ids: "requestParameters.clusterName"
+    filters:
+      - "tag:owner": absent
+      - "tag:creatorid": absent
+    actions:
+      - type: auto-tag-user
+        tag: creatorid
+
+
+
+  - name: elasticsearch-auto-tag-user
+    resource: elasticsearch
+    mode:
+      type: cloudtrail
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      events:
+        - source: es.amazonaws.com
+          event: CreateElasticsearchDomain
+          ids: "requestParameters.DomainName"
+    filters:
+      - "tag:owner": absent
+      - "tag:creatorid": absent
+    actions:
+      - type: auto-tag-user
+        tag: creatorid
+
+
+
+  - name: redshift-auto-tag-user
+    resource: redshift
+    mode:
+      type: cloudtrail
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      events:
+        - source: redshift.amazonaws.com
+          event: CreateCluster
+          ids: "requestParameters.ClusterIdentifier"
+    filters:
+      - "tag:owner": absent
+      - "tag:creatorid": absent
+    actions:
+      - type: auto-tag-user
+        tag: creatorid
+
+
+
+  - name: dynamodb-table-auto-tag-user
+    resource: dynamodb-table
+    mode:
+      type: cloudtrail
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      events:
+        - source: dynamodb.amazonaws.com
+          event: CreateTable
+          ids: "requestParameters.TableName"
+    filters:
+      - "tag:owner": absent
+      - "tag:creatorid": absent
+    actions:
+      - type: auto-tag-user
+        tag: creatorid
+
+
+
+  - name: emr-auto-tag-user
+    resource: emr
+    mode:
+      type: cloudtrail
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      events:
+        - source: elasticmapreduce.amazonaws.com
+          event: CreateCluster
+          ids: "requestParameters.ClusterId"
+    filters:
+      - "tag:owner": absent
+      - "tag:creatorid": absent
+    actions:
+      - type: auto-tag-user
+        tag: creatorid

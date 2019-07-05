@@ -1,0 +1,86 @@
+policies:
+
+  - name: iam-user-nomfa-mark
+    resource: iam-user
+    mode:
+      type: periodic
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      schedule: "cron(0 13 * * ? *)"
+    filters:
+      - type: credential
+        key: password_enabled
+        value: true
+      - type: credential
+        key: mfa_active
+        value: false
+      - "tag:cc-exception": absent
+      - "tag:custodian_iam_cleanup": absent
+    actions:
+      - type: mark-for-op
+        tag: custodian_iam_cleanup
+        msg: "IAM No MFA: {op}@{action_date}"
+        op: delete
+        days: 30
+      - type: notify
+        template: default.html
+        priority_header: 2
+        subject: "IAM User - !!!! Missing MFA !!!! - [custodian {{ account }} - {{ region }}]"
+        violation_desc: |
+          "Your IAM User is missing the required MFA setup."
+        action_desc: |
+          "Actions Taken:  The IAM User will be terminated in 30 days as it doesn't meet requirements.
+          Please activate MFA."
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - csops_alerts@spglobal.com
+          - event-owner
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1
+
+  - name: iam-user-nomfa-unmark
+    resource: iam-user
+    mode:
+      type: periodic
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      schedule: "cron(0 15 * * ? *)"
+    filters:
+      - type: marked-for-op
+        op: delete
+      - type: credential
+        key: mfa_active
+        value: true
+      - "tag:custodian_iam_cleanup": not-null
+    actions:
+      - type: remove-tag
+        tags: ['custodian_iam_cleanup']
+
+  - name: iam-user-nomfa-terminate
+    resource: iam-user
+    mode:
+      type: periodic
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      schedule: "cron(0 17 * * ? *)"
+    filters:
+      - type: marked-for-op
+        op: delete
+    actions:
+      - delete
+      - type: notify
+        template: default.html
+        priority_header: 2
+        subject: "IAM User - !!!! Missing MFA !!!! - [custodian {{ account }} - {{ region }}]"
+        violation_desc: |
+          "Your IAM User is missing the required MFA setup."
+        action_desc: |
+          "Actions Taken:  The IAM User has been terminated as it doesn't meet requirements."
+        to:
+          - mi-aws-cloudcustodian@spglobal.com
+          - resource-owner
+          - csops_alerts@spglobal.com
+        transport:
+          type: sqs
+          queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+          region: us-east-1

@@ -1,0 +1,70 @@
+policies:
+- name: terminate-long-running-rds-instances
+  resource: rds
+  mode:
+    type: periodic
+    role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+    schedule: "cron(0 13 * * ? *)"
+  comments: |
+    Delete instances in the aws account that has been
+    running more than 60 day
+  filters:
+    - "tag:cc-exception": absent
+    - type: value
+      key: InstanceCreateTime
+      op: greater-than
+      value_type: age
+      value: 60
+  actions:
+    - type: delete
+      skip-snapshot: false
+    - type: notify
+      template: default.html
+      priority_header: 1
+      subject: "RDS - Older than 60-days - [custodian {{ account }} - {{ region }}]"
+      violation_desc: |
+        "Your RDS instance is older than 60-days."
+      action_desc: |
+        "Actions Taken: The RDS instance(s) will be terminated."
+      to:
+        - mi-aws-cloudcustodian@spglobal.com
+        - resource-owner
+        - csops_alerts@spglobal.com
+      transport:
+        type: sqs
+        queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+        region: us-east-1
+
+- name: terminate-long-running-rds-instances-30-day
+  resource: rds
+  mode:
+    type: periodic
+    role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+    schedule: "cron(0 13 * * ? *)"
+  comments: |
+    Notify instances in the aws account that has been
+    running more than 30 days
+  filters:
+    - "tag:cc-exception": absent
+    - type: value
+      key: InstanceCreateTime
+      op: greater-than
+      value_type: age
+      value: 31
+  actions:
+    - type: notify
+      template: default.html
+      priority_header: 1
+      subject: "RDS - Older than 30-days - [custodian {{ account }} - {{ region }}]"
+      violation_desc: |
+        "Your RDS instance is older than 30-days."
+      action_desc: |
+        "Actions Taken: The instance will be terminated at 60-days."
+      to:
+        - mi-aws-cloudcustodian@spglobal.com
+        - resource-owner
+        - csops_alerts@spglobal.com
+      transport:
+        type: sqs
+        queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+        region: us-east-1

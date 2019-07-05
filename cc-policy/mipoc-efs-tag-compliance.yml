@@ -1,0 +1,34 @@
+vars:
+  tag-filters: &tag-compliance-filters
+        - "tag:BU": absent
+        - "tag:Owner": absent
+        - "tag:AppID": absent
+        - "tag:Environment": absent
+
+policies:
+
+  - name: efs-tag-compliance-legacy
+    mode:
+      type: periodic
+      role: arn:aws:iam::245930108294:role/CloudCustodian-mipoc
+      schedule: "cron(0 13 * * ? *)"
+    resource: efs
+    filters:
+      - or: *tag-compliance-filters
+      - "tag:cc-exception": absent
+    actions:
+        - type: notify
+          template: default.html
+          priority_header: 1
+          subject: "Elastic File System- !!!! Missing Required Tags !!!! - [custodian {{ account }} - {{ region }}]"
+          violation_desc: "Your Elastic File System is missing the required tags."
+          action_desc: |
+            "Please tag your Elastic File System with following standard: https://thehub.spglobal.com/docs/DOC-120279-tag-youre-it."
+          to:
+              - mi-aws-cloudcustodian@spglobal.com
+              - resource-owner
+              - csops_alerts@spglobal.com
+          transport:
+              type: sqs
+              queue: https://sqs.us-east-1.amazonaws.com/027532563197/cloud-custodian-mailer
+              region: us-east-1

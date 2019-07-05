@@ -1,0 +1,106 @@
+vars:
+  state-filter: &state-filter
+    - "State.Name": running
+    - "State.Name": stopped
+policies:
+
+ - name: plugprd-ec2-vpc-0c563aef35161cf1a-SSSG-add
+   resource: ec2
+   mode:
+     type: periodic
+     role: arn:aws:iam::452127281478:role/CloudCustodian-plugprd
+     schedule: "cron(0 5 * * ? *)"
+   comments: |
+     policy to attach SSSG to ec2 instances.
+   filters:
+     - or: *state-filter
+     - type: security-group
+       value_type: resource_count
+       op: lt
+       value: 5
+     - type: value
+       key: GroupId
+       op: not-in
+       value: 
+         - sg-0d958905c8a4705ed
+     - type: value
+       key: VpcId
+       op: equal
+       value: vpc-0c563aef35161cf1a
+   actions:
+     - type: modify-security-groups
+       add: sg-0d958905c8a4705ed
+
+ - name: plugprd-ec2-vpc-0c563aef35161cf1a-event-SSSG-add
+   resource: ec2
+   mode:
+     type: cloudtrail
+     role: arn:aws:iam::452127281478:role/CloudCustodian-plugprd
+     events:
+       - RunInstances
+   comments: |
+     policy to attach SSSG to ec2 instances.
+   filters:
+     - type: value
+       key: GroupId
+       op: not-in
+       value: 
+         - sg-0d958905c8a4705ed
+     - type: value
+       key: VpcId
+       op: equal
+       value: vpc-0c563aef35161cf1a
+   actions:
+     - type: modify-security-groups
+       add: sg-0d958905c8a4705ed
+
+
+ - name: plugprd-ec2-vpc-075bcd53201fa1bbb-SSSG-add
+   resource: ec2
+   mode:
+     type: periodic
+     role: arn:aws:iam::452127281478:role/CloudCustodian-plugprd
+     schedule: "cron(0 5 * * ? *)"
+   comments: |
+     policy to attach SSSG to ec2 instances.
+   filters:
+     - or: *state-filter
+     - type: security-group
+       value_type: resource_count
+       op: lt
+       value: 5
+     - type: value
+       key: GroupId
+       op: not-in
+       value: 
+         - sg-027be657f786ea56f
+     - type: value
+       key: VpcId
+       op: equal
+       value: vpc-075bcd53201fa1bbb
+   actions:
+     - type: modify-security-groups
+       add: sg-027be657f786ea56f
+
+ - name: plugprd-ec2-vpc-075bcd53201fa1bbb-event-SSSG-add
+   resource: ec2
+   mode:
+     type: cloudtrail
+     role: arn:aws:iam::452127281478:role/CloudCustodian-plugprd
+     events:
+       - RunInstances
+   comments: |
+     policy to attach SSSG to ec2 instances.
+   filters:
+     - type: value
+       key: GroupId
+       op: not-in
+       value: 
+         - sg-027be657f786ea56f
+     - type: value
+       key: VpcId
+       op: equal
+       value: vpc-075bcd53201fa1bbb
+   actions:
+     - type: modify-security-groups
+       add: sg-027be657f786ea56f
